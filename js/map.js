@@ -4,6 +4,7 @@ var TILE_EMPTY = "1";
 var Map = function()
 {
 	this.stages = [];
+	this.currentStage = null;
 
 	this.Init = function()
 	{
@@ -13,10 +14,10 @@ var Map = function()
 		stage = new Stage;
 		stage.level = 0;
 		stage.startX = 0;
-		stage.startY = 10;
+		stage.startY = 0;
 		var tiles = 
 "11000000000000000000" +
-"011111111111111100000" +
+"01111111111111110000" +
 "00000000000000010000" +
 "00000000000000010000" +
 "00000011111111110000" +
@@ -74,6 +75,34 @@ var Map = function()
 			return false;
 		}
 	};
+	this.IsValidRoad = function(x, y)
+	{
+		if(this.IsValidTile(x, y) == false)
+		{
+			return false;
+		}
+
+		var tiles = this.currentStage.tiles;
+
+		if(tiles[x][y] == TILE_EMPTY)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
+	this.AddTower = function(x, y)
+	{
+		var tower = new Tower;
+		tower.x = x;
+		tower.y = y;
+		tower.Init();
+
+		this.currentStage.towers.push(tower);
+	};
 }
 
 var Stage = function()
@@ -81,6 +110,8 @@ var Stage = function()
 	this.level = 0;
 	this.startX = 0;
 	this.startY = 0;
+	this.spawnDelay = 1000;
+	this.spawnCooltime = 0;
 
 	this.tiles = [];
 	this.enemies = [];
@@ -88,9 +119,24 @@ var Stage = function()
 
 	this.Init = function()
 	{
+		this.spawnCooltime = this.spawnDelay;
+
 		for(var i in this.enemies)
 		{
 			this.enemies[i].SetPos(this.startX, this.startY);
+		}
+	};
+	this.Update = function(ms)
+	{
+		if(this.spawnCooltime > 0)
+		{
+			this.spawnCooltime -= ms;
+		}
+
+		if(this.spawnCooltime <= 0)
+		{
+			
+			this.spawnCooltime = this.spawnDelay;
 		}
 	};
 };

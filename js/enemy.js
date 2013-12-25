@@ -14,7 +14,7 @@ var Enemy = function(moveSpeed, defense, hp)
 	this.defense = defense;
 	this.hp = hp;
 	this.direction = RIGHT;
-	this.map = null;
+	this.map = map;
 
 	this.SetPos = function(x, y)
 	{
@@ -27,26 +27,37 @@ var Enemy = function(moveSpeed, defense, hp)
 	{
 		this.pixelX = pixelX;
 		this.pixelY = pixelY;
+
+		this.x = Math.floor(this.pixelX / tileWidth);
+		this.y = Math.floor(this.pixelY / tileHeight);
+	}
+	this.Die = function()
+	{
+		var index = this.map.currentStage.enemies.indexOf(this);
+		this.map.currentStage.enemies.splice(index, 1);
+		console.log("DEAD!");
 	}
 	this.Update = function(ms)
 	{
 		var direction = this.direction;
-		var dx = ms / 1000 * this.moveSpeed * direction.x;
-		var dy = ms / 1000 * this.moveSpeed * direction.y;
+		var dx = ms / 1000 * this.moveSpeed * tileWidth * direction.x;
+		var dy = ms / 1000 * this.moveSpeed * tileHeight * direction.y;
 
 		this.SetPixelPos(this.pixelX + dx, this.pixelY + dy);
 
-		if(Math.pow(this.x * mapWidth - this.pixelX)
-			+ Math.pow(this.y * mapWidth - this.pixelY) <= mapWidth / 10)
+		var distance = Math.pow(this.x * tileWidth - this.pixelX, 2) +
+		Math.pow(this.y * tileHeight - this.pixelY, 2);
+		var isInCircle = distance <= Math.pow(tileWidth / 10, 2);
+
+		if(isInCircle)
 		{
 			this.GoNextTile();
 		}
 	};
-
 	this.GoNextTile = function()
 	{
 		var direction = this.direction;
-		var tiles = map.tiles;
+		var tiles = this.map.currentStage.tiles;
 		var nextX = this.x + direction.x;
 		var nextY = this.y + direction.y;
 
@@ -59,12 +70,12 @@ var Enemy = function(moveSpeed, defense, hp)
 		if(nextTile == TILE_WALL)
 		{
 			var leftX = this.x - direction.y;
-			var leftY = this.x + direction.x;
+			var leftY = this.y + direction.x;
 
 			var rightX = this.x + direction.y;
 			var rightY = this.y - direction.x;
 
-			if(this.map.IsValidTile(leftX, leftY))
+			if(this.map.IsValidRoad(leftX, leftY))
 			{
 				this.direction =
 				{
@@ -75,7 +86,7 @@ var Enemy = function(moveSpeed, defense, hp)
 				this.x = leftX;
 				this.y = leftY;
 			}
-			else if(this.map.IsValidTile(rightX, rightY))
+			else if(this.map.IsValidRoad(rightX, rightY))
 			{
 				this.direction =
 				{

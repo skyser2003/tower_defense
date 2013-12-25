@@ -29,7 +29,19 @@ var Game = function()
 		map.Init();
 
 		this.stage = map.stages[this.stageLevel];
+		map.currentStage = this.stage;
 		this.stage.Init();
+
+		$("#canvas").mousedown(function(obj)
+		{
+			var x = obj.offsetX;
+			var y = obj.offsetY;
+
+			var tileX = Math.floor(x / tileWidth);
+			var tileY = Math.floor(y / tileHeight);
+
+			map.AddTower(tileX, tileY);
+		});
 	};
 
 	this.Run = function()
@@ -44,6 +56,11 @@ var Game = function()
 		{
 			var enemy = stage.enemies[i];
 			enemy.Update(1000 / 60);
+		}
+		for(var i in stage.towers)
+		{
+			var tower = stage.towers[i];
+			tower.Update(1000 / 60);
 		}
 
 		this.Draw();
@@ -73,11 +90,16 @@ var Game = function()
 		{
 			drawEnemy(stage.enemies[i].pixelX, stage.enemies[i].pixelY);
 		}
+		for(var i in stage.towers)
+		{
+			drawTower(stage.towers[i].x, stage.towers[i].y);
+		}
 	}
 };
 
 function drawTower(x, y)
 {
+	ctx.fillStyle="#FF00FF";
 	ctx.fillRect(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
 }
 function drawStartTile(x, y)
