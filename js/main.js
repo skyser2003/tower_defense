@@ -14,12 +14,13 @@ $(document).ready(function()
 {
 	game = new Game;
 	game.Init();
+	game.Run();
 });
 
 var Game = function()
 {
-	this.stage = 0;
-	this.mapJSON = null;
+	this.stageLevel = 0;
+	this.stage = null;
 
 	this.Init = function()
 	{
@@ -27,8 +28,29 @@ var Game = function()
 		map = new Map;
 		map.Init();
 
-		var stage = map.stages[0];
-		console.log(stage.tiles);
+		this.stage = map.stages[this.stageLevel];
+		this.stage.Init();
+	};
+
+	this.Run = function()
+	{
+		var game = this;
+		setInterval("game.Update()", 1000 / 60);
+	};
+	this.Update = function()
+	{
+		var stage = this.stage;
+		for(var i in stage.enemies)
+		{
+			var enemy = stage.enemies[i];
+			enemy.Update(1000 / 60);
+		}
+
+		this.Draw();
+	};
+	this.Draw = function()
+	{
+		var stage = this.stage;
 
 		for(var i=0; i<mapWidth; ++i)
 		{
@@ -46,16 +68,12 @@ var Game = function()
 		}
 
 		drawStartTile(stage.startX, stage.startY);
-	};
 
-	this.Run = function()
-	{
-
-	};
-	this.Update = function()
-	{
-
-	};
+		for(var i in stage.enemies)
+		{
+			drawEnemy(stage.enemies[i].pixelX, stage.enemies[i].pixelY);
+		}
+	}
 };
 
 function drawTower(x, y)
@@ -81,5 +99,5 @@ function drawEmptyTile(x, y)
 function drawEnemy(x, y)
 {
 	ctx.fillStyle="#00FFFF";
-	ctx.fillRect(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+	ctx.fillRect(x, y, tileWidth, tileHeight);
 }

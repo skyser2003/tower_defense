@@ -61,6 +61,19 @@ var Map = function()
 
 		this.stages.push(stage)
 	};
+
+	this.IsValidTile = function(x, y)
+	{
+		if(0 <= x && x < mapWidth
+		 && 0 <= y && y < mapHeight)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	};
 }
 
 var Stage = function()
@@ -72,4 +85,12 @@ var Stage = function()
 	this.tiles = [];
 	this.enemies = [];
 	this.towers = [];
+
+	this.Init = function()
+	{
+		for(var i in this.enemies)
+		{
+			this.enemies[i].SetPos(this.startX, this.startY);
+		}
+	};
 };
