@@ -10,9 +10,12 @@ var ctx;
 var map;
 var game;
 var img;
+var imgTile;
+var imgStartTile;
 $(document).ready(function()
 {
-	$("#bg").hide();
+	$("img").hide();
+	//$("#tile").hide();
 	game = new Game;
 	game.Init();
 	game.Run();
@@ -28,8 +31,8 @@ var Game = function()
 	{
 		ctx = document.getElementById("canvas").getContext('2d');		
 		img = $("#bg")[0];
-		img.height = 1000;
-		img.width = 1000;
+		imgTile = $("#tile")[0];
+		imgStartTile = $("#startTile")[0];
 		map = new Map;
 		map.Init();
 
@@ -85,7 +88,7 @@ var Game = function()
 
 function drawBackground()
 {
-	ctx.drawImage(img,-300,-500);
+	ctx.drawImage(img, 0,0, 1000, 1000);
 }
 
 function drawTower(x, y)
@@ -94,8 +97,9 @@ function drawTower(x, y)
 }
 function drawStartTile(x, y)
 {
-	ctx.fillStyle="#0000FF";
-	ctx.fillRect(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+	ctx.drawImage(imgStartTile, x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+	//ctx.fillStyle="#0000FF";	
+	//ctx.fillRect(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
 }
 function drawWall(x, y)
 {
@@ -104,8 +108,9 @@ function drawWall(x, y)
 }
 function drawEmptyTile(x, y)
 {
-	ctx.fillStyle="#FF0000";
-	ctx.fillRect(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+	ctx.drawImage(imgTile, x * tileWidth, y * tileHeight, tileWidth, tileHeight);
+	//ctx.fillStyle="#FF0000";
+	//ctx.fillRect(x * tileWidth, y * tileHeight, tileWidth, tileHeight);
 }
 
 function drawEnemy(x, y)
