@@ -9,9 +9,10 @@ var mapHeightPixel = tileHeight * mapHeight;
 var ctx;
 var map;
 var game;
-
+var img;
 $(document).ready(function()
 {
+	$("#bg").hide();
 	game = new Game;
 	game.Init();
 	game.Run();
@@ -22,9 +23,13 @@ var Game = function()
 	this.stageLevel = 0;
 	this.stage = null;
 
+
 	this.Init = function()
 	{
-		ctx = document.getElementById("canvas").getContext('2d');
+		ctx = document.getElementById("canvas").getContext('2d');		
+		img = $("#bg")[0];
+		img.height = 1000;
+		img.width = 1000;
 		map = new Map;
 		map.Init();
 
@@ -51,7 +56,7 @@ var Game = function()
 	this.Draw = function()
 	{
 		var stage = this.stage;
-
+		drawBackground();
 		for(var i=0; i<mapWidth; ++i)
 		{
 			for(var j=0; j<mapHeight; ++j)
@@ -62,7 +67,7 @@ var Game = function()
 				}
 				else if(stage.tiles[i][j] == TILE_WALL)
 				{
-					drawWall(i, j);
+					//drawWall(i, j);
 				}
 			}
 		}
@@ -73,8 +78,15 @@ var Game = function()
 		{
 			drawEnemy(stage.enemies[i].pixelX, stage.enemies[i].pixelY);
 		}
+
+
 	}
 };
+
+function drawBackground()
+{
+	ctx.drawImage(img,-300,-500);
+}
 
 function drawTower(x, y)
 {
